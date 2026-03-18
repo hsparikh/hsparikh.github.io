@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuva Content Validator and Classroom Simulator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#1a1a1a;}
+.navbar{background:#1a3a35;display:flex;align-items:center;gap:0;padding:0 24px;height:52px;}
+.nav-logo{color:#e8c84a;font-size:20px;font-weight:700;letter-spacing:-0.5px;margin-right:8px;}
+.nav-btn{background:#fff;color:#1a3a35;font-size:13px;font-weight:700;padding:6px 14px;border-radius:4px;border:none;cursor:pointer;margin-right:16px;}
+.nav-link{color:rgba(255,255,255,0.85);font-size:13px;padding:0 12px;cursor:pointer;white-space:nowrap;}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.nav-premium{border:1.5px solid #e8c84a;color:#e8c84a;font-size:12px;font-weight:700;padding:4px 12px;border-radius:4px;background:transparent;}
+.nav-help,.nav-user{color:rgba(255,255,255,0.75);font-size:13px;}
+.page{padding:40px 48px 48px;}
+h1{font-size:28px;font-weight:700;color:#1a3a35;text-align:center;margin-bottom:10px;}
+.subtitle{font-size:15px;color:#555;text-align:center;margin-bottom:28px;line-height:1.5;}
+.tab-row{display:flex;justify-content:center;margin-bottom:36px;}
+.tab-group{display:flex;border-radius:6px;overflow:hidden;border:1.5px solid #1a3a35;}
+.tab{padding:10px 32px;font-size:14px;font-weight:500;cursor:pointer;background:#fff;color:#1a3a35;}
+.tab.active{background:#1a3a35;color:#fff;}
+.filter-row{display:flex;align-items:center;gap:16px;margin-bottom:6px;}
+.filter-row label{font-size:14px;font-weight:700;color:#1a1a1a;}
+select{font-size:14px;padding:8px 14px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#1a1a1a;min-width:180px;cursor:pointer;}
+.table-label{font-size:14px;font-weight:700;color:#1a1a1a;margin:20px 0 10px;}
+.tbl-wrap{border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
+th{background:#f7f7f5;text-align:left;padding:10px 14px;font-size:12px;font-weight:600;color:#888;border-bottom:1px solid #e5e5e5;}
+td{padding:10px 14px;border-bottom:0.5px solid #e5e5e5;color:#1a1a1a;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafafa;}
+.title-cell{display:flex;align-items:center;gap:8px;}
+.link-cell{color:#1a3a35;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(26,58,53,0.3);}
+.lib-badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.b-amber{background:#FAEEDA;color:#854F0B;}
+.b-teal{background:#E1F5EE;color:#0F6E56;}
+.type-pill{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;}
+.tp-act{background:#E1F5EE;color:#0F6E56;}
+.tp-les{background:#E6F1FB;color:#185FA5;}
+.count-link{color:#185FA5;font-weight:600;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(24,95,165,0.3);}
+.count-link:hover{text-decoration-color:#185FA5;}
+.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:100;align-items:flex-start;justify-content:center;padding-top:80px;}
+.overlay.open{display:flex;}
+.popup{background:#fff;border-radius:12px;border:0.5px solid #ccc;width:600px;max-width:95%;overflow:hidden;}
+.popup-header{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 20px 14px;border-bottom:0.5px solid #e5e5e5;}
+.popup-title{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:3px;}
+.popup-sub{font-size:12px;color:#888;}
+.close-btn{background:none;border:none;font-size:18px;cursor:pointer;color:#aaa;line-height:1;padding:2px 4px;}
+.close-btn:hover{color:#1a1a1a;}
+.popup-table{width:100%;border-collapse:collapse;font-size:13px;}
+.popup-table th{background:#f7f7f5;padding:9px 16px;font-size:11px;font-weight:600;color:#888;text-align:left;border-bottom:0.5px solid #e5e5e5;}
+.popup-table td{padding:10px 16px;border-bottom:0.5px solid #e5e5e5;color:#1a1a1a;}
+.popup-table tr:last-child td{border-bottom:none;}
+.popup-table tr:hover td{background:#fafafa;}
+.popup-footer{padding:12px 20px;border-top:0.5px solid #e5e5e5;font-size:12px;color:#aaa;}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <span class="nav-logo">Tu<span style="color:#e8c84a;">v</span>a</span>
+  <button class="nav-btn">Tuva Tools</button>
+  <span class="nav-link">Tuva Jr. ▾</span>
+  <span class="nav-link">Dashboard</span>
+  <span class="nav-link">Content Library ▾</span>
+  <span class="nav-link">Dataset Library ▾</span>
+  <span class="nav-link">Assessments</span>
+  <span class="nav-link">Teaching ▾</span>
+  <div class="nav-right">
+    <span class="nav-premium">PREMIUM</span>
+    <span class="nav-help">Help</span>
+    <span class="nav-user">HSPARIKH ▾</span>
+  </div>
+</div>
+
+<div class="page">
+  <h1>Content Validator and Classroom Simulator</h1>
+  <p class="subtitle">This utility lets you validate your lesson's Markdown syntax and preview how students will<br>experience and answer it.</p>
+
+  <div class="tab-row">
+    <div class="tab-group">
+      <div class="tab">Content Validator</div>
+      <div class="tab active">Answer Check</div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <label>Content Assigned:</label>
+    <select>
+      <option>Past Week</option>
+      <option>Past Month</option>
+      <option>Past 3 Months</option>
+      <option>All Time</option>
+    </select>
+  </div>
+
+  <div class="table-label">Recently Assigned Content</div>
+  <div class="tbl-wrap">
+    <table>
+      <colgroup>
+        <col style="width:36%">
+        <col style="width:12%">
+        <col style="width:16%">
+        <col style="width:11%">
+        <col style="width:13%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Type</th>
+          <th>Created by</th>
+          <th>Published</th>
+          <th>Assignment count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="title-cell"><span class="link-cell">Beach Cleanup</span><span class="lib-badge b-amber">Premium</span></div></td>
+          <td><span class="type-pill tp-act">Activity</span></td>
+          <td style="color:#888;">becky714_tuva</td>
+          <td><span style="color:#0F6E56;font-weight:500;">Yes</span></td>
+          <td><span class="count-link" onclick="openPopup('Beach Cleanup', 15, 'beach')">15</span></td>
+        </tr>
+        <tr>
+          <td><div class="title-cell"><span class="link-cell">Muddy, Muddier, Muddiest</span><span class="lib-badge b-teal">Jr.</span></div></td>
+          <td><span class="type-pill tp-les">Lesson</span></td>
+          <td style="color:#888;">jocelyn397</td>
+          <td><span style="color:#0F6E56;font-weight:500;">Yes</span></td>
+          <td><span class="count-link" onclick="openPopup('Muddy, Muddier, Muddiest', 9, 'muddy')">9</span></td>
+        </tr>
+        <tr>
+          <td><div class="title-cell"><span class="link-cell">Preparing for a Hurricane</span><span class="lib-badge b-amber">Premium</span></div></td>
+          <td><span class="type-pill tp-act">Activity</span></td>
+          <td style="color:#888;">becky714_tuva</td>
+          <td><span style="color:#0F6E56;font-weight:500;">Yes</span></td>
+          <td><span class="count-link" onclick="openPopup('Preparing for a Hurricane', 7, 'hurricane')">7</span></td>
+        </tr>
+        <tr>
+          <td><div class="title-cell"><span class="link-cell">Happy Birthday!</span><span class="lib-badge b-teal">Jr.</span></div></td>
+          <td><span class="type-pill tp-les">Lesson</span></td>
+          <td style="color:#888;">becky714_tuva</td>
+          <td><span style="color:#0F6E56;font-weight:500;">Yes</span></td>
+          <td><span class="count-link" onclick="openPopup('Happy Birthday!', 7, 'birthday')">7</span></td>
+        </tr>
+        <tr>
+          <td><div class="title-cell"><span class="link-cell">Rainfall and Flooding Patterns</span><span class="lib-badge b-amber">Premium</span></div></td>
+          <td><span class="type-pill tp-act">Activity</span></td>
+          <td style="color:#888;">jocelyn397</td>
+          <td><span style="color:#aaa;">No</span></td>
+          <td><span class="count-link" onclick="openPopup('Rainfall and Flooding Patterns', 3, 'rainfall')">3</span></td>
+        </tr>
+        <tr>
+          <td><div class="title-cell"><span class="link-cell">Introduction to Data Patterns</span><span class="lib-badge b-amber">Premium</span></div></td>
+          <td><span class="type-pill tp-les">Lesson</span></td>
+          <td style="color:#888;">becky714_tuva</td>
+          <td><span style="color:#0F6E56;font-weight:500;">Yes</span></td>
+          <td><span class="count-link" onclick="openPopup('Introduction to Data Patterns', 2, 'intro')">2</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="popup" id="popup">
+    <div class="popup-header">
+      <div>
+        <div class="popup-title" id="popupTitle"></div>
+        <div class="popup-sub" id="popupSub"></div>
+      </div>
+      <button class="close-btn" onclick="closePopup()">✕</button>
+    </div>
+    <div class="popup-body">
+      <table class="popup-table">
+        <thead>
+          <tr>
+            <th>Teacher</th>
+            <th>School / District</th>
+            <th>Class</th>
+            <th>Assigned on</th>
+            <th>Students</th>
+          </tr>
+        </thead>
+        <tbody id="popupRows"></tbody>
+      </table>
+    </div>
+    <div class="popup-footer" id="popupFooter"></div>
+  </div>
+</div>
+
+<script>
+const data = {
+  beach: [
+    {teacher:'M. Thompson',school:'Lincoln Middle School',cls:'6th Grade Science',date:'Mar 10, 2025',students:28},
+    {teacher:'J. Patel',school:'Riverside USD',cls:'Environmental Studies',date:'Mar 9, 2025',students:24},
+    {teacher:'A. Kim',school:'Westview Academy',cls:'7th Grade Science',date:'Mar 7, 2025',students:30},
+    {teacher:'S. Nguyen',school:'Oakdale Middle School',cls:'Earth Science',date:'Mar 5, 2025',students:26},
+    {teacher:'R. Martinez',school:'Hillcrest USD',cls:'6th Grade Science',date:'Mar 4, 2025',students:22},
+    {teacher:'L. Chen',school:'Maplewood School',cls:'Honors Science',date:'Mar 2, 2025',students:18},
+    {teacher:'D. Okafor',school:'Central Middle School',cls:'8th Grade Science',date:'Feb 28, 2025',students:29},
+    {teacher:'P. Williams',school:'Sunridge USD',cls:'Life Science',date:'Feb 26, 2025',students:25},
+    {teacher:'T. Garcia',school:'Eastside Academy',cls:'7th Grade Science',date:'Feb 24, 2025',students:27},
+    {teacher:'C. Johnson',school:'Northview Middle',cls:'Environmental Science',date:'Feb 20, 2025',students:23},
+    {teacher:'H. Brown',school:'Valley Middle School',cls:'6th Grade Science',date:'Feb 18, 2025',students:21},
+    {teacher:'F. Davis',school:'Parkview USD',cls:'Earth & Space',date:'Feb 15, 2025',students:20},
+    {teacher:'K. Wilson',school:'Creekside Academy',cls:'8th Grade Science',date:'Feb 12, 2025',students:31},
+    {teacher:'B. Moore',school:'Lakeview Middle',cls:'7th Grade Science',date:'Feb 10, 2025',students:19},
+    {teacher:'N. Taylor',school:'Summit USD',cls:'Integrated Science',date:'Feb 7, 2025',students:26},
+  ],
+  muddy: [
+    {teacher:'A. Kim',school:'Westview Academy',cls:'3rd Grade',date:'Mar 11, 2025',students:22},
+    {teacher:'S. Nguyen',school:'Oakdale Elementary',cls:'4th Grade',date:'Mar 8, 2025',students:20},
+    {teacher:'R. Martinez',school:'Hillcrest USD',cls:'2nd Grade',date:'Mar 6, 2025',students:18},
+    {teacher:'L. Chen',school:'Maplewood School',cls:'3rd Grade',date:'Mar 3, 2025',students:24},
+    {teacher:'D. Okafor',school:'Central Elementary',cls:'4th Grade',date:'Feb 27, 2025',students:21},
+    {teacher:'P. Williams',school:'Sunridge USD',cls:'3rd Grade',date:'Feb 25, 2025',students:19},
+    {teacher:'T. Garcia',school:'Eastside Elementary',cls:'2nd Grade',date:'Feb 22, 2025',students:23},
+    {teacher:'C. Johnson',school:'Northview Elementary',cls:'4th Grade',date:'Feb 19, 2025',students:25},
+    {teacher:'H. Brown',school:'Valley Elementary',cls:'3rd Grade',date:'Feb 17, 2025',students:20},
+  ],
+  hurricane: [
+    {teacher:'M. Thompson',school:'Lincoln Middle School',cls:'6th Grade Science',date:'Mar 9, 2025',students:28},
+    {teacher:'J. Patel',school:'Riverside USD',cls:'Earth Science',date:'Mar 6, 2025',students:24},
+    {teacher:'A. Kim',school:'Westview Academy',cls:'7th Grade Science',date:'Mar 4, 2025',students:30},
+    {teacher:'S. Nguyen',school:'Oakdale Middle School',cls:'Meteorology',date:'Mar 1, 2025',students:22},
+    {teacher:'R. Martinez',school:'Hillcrest USD',cls:'6th Grade Science',date:'Feb 26, 2025',students:26},
+    {teacher:'L. Chen',school:'Maplewood School',cls:'Honors Science',date:'Feb 23, 2025',students:18},
+    {teacher:'D. Okafor',school:'Central Middle School',cls:'8th Grade Science',date:'Feb 20, 2025',students:29},
+  ],
+  birthday: [
+    {teacher:'P. Williams',school:'Sunridge USD',cls:'3rd Grade',date:'Mar 10, 2025',students:21},
+    {teacher:'T. Garcia',school:'Eastside Elementary',cls:'2nd Grade',date:'Mar 7, 2025',students:23},
+    {teacher:'C. Johnson',school:'Northview Elementary',cls:'4th Grade',date:'Mar 4, 2025',students:19},
+    {teacher:'H. Brown',school:'Valley Elementary',cls:'3rd Grade',date:'Mar 1, 2025',students:22},
+    {teacher:'F. Davis',school:'Parkview USD',cls:'2nd Grade',date:'Feb 26, 2025',students:20},
+    {teacher:'K. Wilson',school:'Creekside Academy',cls:'4th Grade',date:'Feb 23, 2025',students:18},
+    {teacher:'B. Moore',school:'Lakeview Elementary',cls:'3rd Grade',date:'Feb 20, 2025',students:24},
+  ],
+  rainfall: [
+    {teacher:'N. Taylor',school:'Summit USD',cls:'7th Grade Science',date:'Mar 8, 2025',students:26},
+    {teacher:'M. Thompson',school:'Lincoln Middle School',cls:'Earth Science',date:'Mar 5, 2025',students:28},
+    {teacher:'J. Patel',school:'Riverside USD',cls:'Environmental Studies',date:'Mar 2, 2025',students:24},
+  ],
+  intro: [
+    {teacher:'A. Kim',school:'Westview Academy',cls:'Data Literacy',date:'Mar 11, 2025',students:30},
+    {teacher:'S. Nguyen',school:'Oakdale Middle School',cls:'8th Grade Math',date:'Mar 8, 2025',students:27},
+  ],
+};
+
+function openPopup(title, count, key) {
+  document.getElementById('popupTitle').textContent = title;
+  document.getElementById('popupSub').textContent = count + ' teacher assignment' + (count !== 1 ? 's' : '');
+  const rows = data[key] || [];
+  const totalStudents = rows.reduce((s, r) => s + r.students, 0);
+  document.getElementById('popupRows').innerHTML = rows.map(r =>
+    `<tr><td style="font-weight:500;">${r.teacher}</td><td style="color:#888;">${r.school}</td><td style="color:#888;">${r.cls}</td><td style="color:#888;">${r.date}</td><td>${r.students}</td></tr>`
+  ).join('');
+  document.getElementById('popupFooter').textContent = totalStudents.toLocaleString() + ' total students reached across all assignments';
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closePopup() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closePopup();
+}
+</script>
+</body>
+</html>
